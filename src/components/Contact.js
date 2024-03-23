@@ -1,9 +1,86 @@
-import React from 'react'
-import styled from 'styled-components'
+import React, { useState } from "react";
+import styled from "styled-components";
 
 const Contact = () => {
-  return <h4>contact section</h4>
-}
+  const [formData, setFormData] = useState({
+    email: "",
+  });
+
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("https://formspree.io/f/xnqkdolz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        console.log("Form submitted successfully!");
+
+        setFormData({
+          email: "",
+        });
+
+        setShowSuccessMessage(true);
+
+        setTimeout(() => {
+          setShowSuccessMessage(false);
+        }, 10000);
+      } else {
+        console.error("Form submission failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("An error occurred during form submission:", error);
+    }
+  };
+
+  return (
+    <Wrapper>
+      <div className="section-center">
+        <h3>Join our newsletter and get 20% off</h3>
+        <div className="content">
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            Reprehenderit maxime sapiente nostrum? Laborum, suscipit! Nesciunt,
+            cumque. Exercitationem illo possimus impedit?
+          </p>
+          <form className="contact-form" onSubmit={handleSubmit} method="POST">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              className="form-input"
+              placeholder="enter email"
+              onChange={handleChange}
+            />
+            <button type="submit" className="submit-btn">
+              Subscribe
+            </button>
+          </form>
+          {showSuccessMessage && (
+            <div className="">
+              <p>Thanks for Subscribing</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </Wrapper>
+  );
+};
 const Wrapper = styled.section`
   padding: 5rem 0;
   h3 {
@@ -67,6 +144,6 @@ const Wrapper = styled.section`
   @media (min-width: 1280px) {
     padding: 15rem 0;
   }
-`
+`;
 
-export default Contact
+export default Contact;
